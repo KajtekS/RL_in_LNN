@@ -2,7 +2,9 @@ import torch
 import torch.nn.functional as F
 import gymnasium as gym
 import lightning as L
+from torch.utils.data import DataLoader
 
+from MLP import MLP
 from model import Model
 
 
@@ -59,16 +61,26 @@ class JointSolver(L.LightningModule):
         for lp, G in zip(log_probs, returns):
             policy_loss.append(-lp * G)
 
-        return torch.stack(policy_loss).sum()
+        return torch.stack(policy_loss).mean()
 
     def configure_optimizers(self):
         return torch.optim.Adam(self.lnn.parameters(), lr=1e-3)
 
+#17 ver for 1e-3 sum
 if __name__ == '__main__':
+    '''
     lnn_model = Model(6, 3, 64).lnn
+    lnn_model = torch.compile(lnn_model)
     solver = JointSolver(lnn_model)
 
-    from torch.utils.data import DataLoader
+    train_loader = DataLoader(range(500), batch_size=1, num_workers=7)
+    trainer = L.Trainer(max_epochs=1, log_every_n_steps=10, enable_progress_bar=True)
+    trainer.fit(solver, train_loader)
+    '''
+    lnn_model = MLP(6, 3)
+    lnn_model = torch.compile(lnn_model)
+    solver = JointSolver(lnn_model)
+
     train_loader = DataLoader(range(1000), batch_size=1, num_workers=7)
     trainer = L.Trainer(max_epochs=1, log_every_n_steps=10, enable_progress_bar=True)
     trainer.fit(solver, train_loader)
