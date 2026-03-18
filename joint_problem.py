@@ -66,7 +66,8 @@ class JointSolver(L.LightningModule):
     def configure_optimizers(self):
         return torch.optim.Adam(self.lnn.parameters(), lr=1e-3)
 
-#17 ver for 1e-3 sum
+#17 ver for 1e-3 sum For better perform of LNN, you should use 1e3 lr and sum of policy_loss
+#rather than mean
 if __name__ == '__main__':
     '''
     lnn_model = Model(6, 3, 64).lnn
