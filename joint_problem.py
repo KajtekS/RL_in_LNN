@@ -1,11 +1,6 @@
 import torch
-import torch.nn as nn
 import torch.nn.functional as F
-from lightning.pytorch.utilities.types import STEP_OUTPUT
-from ncps.torch import CfC
-from ncps.wirings import AutoNCP
 import gymnasium as gym
-import matplotlib.pyplot as plt
 import lightning as L
 
 from model import Model

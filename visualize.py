@@ -2,6 +2,8 @@ import torch
 import torch.nn.functional as F
 import gymnasium as gym
 import lightning as L
+
+from MLP import MLP
 from model import Model
 
 from joint_problem import JointSolver
@@ -60,7 +62,8 @@ def visualize_game_joint(checkpoint_path, model_config=(6, 3, 64)):
 
 def visualize_game_pool_court(checkpoint_path, model_config=(4, 2, 32)):
     input_size, output_size, hidden_size = model_config
-    lnn_inner = Model(input_size, output_size, hidden_size).lnn
+    #lnn_inner = Model(input_size, output_size, hidden_size).lnn
+    lnn_inner = MLP(input_size, output_size)
 
     try:
         solver = JointSolver.load_from_checkpoint(checkpoint_path, lnn_model=lnn_inner)
@@ -103,6 +106,6 @@ def visualize_game_pool_court(checkpoint_path, model_config=(4, 2, 32)):
 
 
 if __name__ == '__main__':
-    PATH = "./lightning_logs/version_19/checkpoints/epoch=0-step=300.ckpt"
+    PATH = "./lightning_logs/version_26/checkpoints/epoch=0-step=500.ckpt"
 
     visualize_game_pool_court(PATH)
