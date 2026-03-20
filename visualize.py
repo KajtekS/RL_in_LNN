@@ -110,6 +110,6 @@ def visualize_game_pool_court(checkpoint_path, model_config=(4, 2, 64)):
 
 
 if __name__ == '__main__':
-    PATH = "./lightning_logs/version_19/checkpoints/epoch=0-step=1000.ckpt"
+    PATH = "./lightning_logs/version_21/checkpoints/epoch=0-step=500.ckpt"
 
     visualize_game_joint(PATH)
