@@ -5,6 +5,9 @@ This repository contains a research-focused project exploring the application of
 ## 🎯 Project Objective
 The primary goal of this project was to evaluate whether the unique temporal dynamics and adaptive nature of Liquid Neural Networks lead to competitive or superior results in classic control problems compared to traditional architectures.
 
+## Conclusions
+Using RL with LNN is great idea. We can observe that in complex problems, lnns' learns faster and beats MLP's. However Lnn defats during easy task like cart pole.
+
 ## 🛠️ Environment & Tools
 To benchmark the performance, I utilized **Gymnasium** (the maintained fork of OpenAI Gym), which provides standardized environments for simulating complex physical scenarios.
 
