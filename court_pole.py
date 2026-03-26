@@ -81,6 +81,7 @@ class CartPole(L.LightningModule):
         return torch.optim.Adam(self.lnn.parameters(), lr=1e-4)
 
 if __name__ == '__main__':
+    '''
     lnn_model = Model(4, 2, 64).lnn
     lnn_model = torch.compile(lnn_model)
     solver = CartPole(lnn_model)
@@ -88,7 +89,7 @@ if __name__ == '__main__':
     train_loader = DataLoader(range(1000), batch_size=1, num_workers=7)
     trainer = L.Trainer(max_epochs=1, log_every_n_steps=10, enable_progress_bar=True)
     trainer.fit(solver, train_loader)
-
+    '''
     mlp_model = MLP(4, 2)
     mlp_model = torch.compile(mlp_model)
     solver = CartPole(mlp_model)

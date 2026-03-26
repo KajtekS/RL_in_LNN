@@ -18,8 +18,8 @@ else:
 
 def visualize_game_joint(checkpoint_path, model_config=(6, 3, 64)):
     input_size, output_size, hidden_size = model_config
-    #lnn_inner = Model(input_size, output_size, hidden_size).lnn
-    lnn_inner = MLP(6, 3)
+    lnn_inner = Model(input_size, output_size, hidden_size).lnn
+    #lnn_inner = MLP(6, 3)
     lnn_inner = torch.compile(lnn_inner)
 
     try:
@@ -110,6 +110,7 @@ def visualize_game_pool_court(checkpoint_path, model_config=(4, 2, 64)):
 
 
 if __name__ == '__main__':
-    PATH = "./lightning_logs/version_21/checkpoints/epoch=0-step=500.ckpt"
+    PATH = "./lightning_logs/version_17/checkpoints/epoch=0-step=500.ckpt"
 
     visualize_game_joint(PATH)
+    #visualize_game_pool_court(PATH)
