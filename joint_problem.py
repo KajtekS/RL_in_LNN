@@ -4,72 +4,15 @@ import gymnasium as gym
 import lightning as L
 from torch.utils.data import DataLoader
 
+from JointSolver import JointSolver
 from MLP import MLP
 from model import Model
 
 
-class JointSolver(L.LightningModule):
-    def __init__(self, lnn_model):
-        super().__init__()
-        self.lnn = lnn_model
-        self.env = gym.make("Acrobot-v1")
+#Conclusion is model weights less and gives similar results as MLP
+#Try to change in calc_loss using mean/sum at end.
 
-    def training_step(self, batch, batch_idx):
-        state, _ = self.env.reset()
-        log_probs = []
-        rewards = []
-        done = False
-        hx = None
-
-        while not done:
-            state_tensor = torch.FloatTensor(state).view(1, 1, -1).to(self.device)
-
-            output, hx = self.lnn(state_tensor, hx)
-
-            probs = F.softmax(output.view(-1), dim=0)
-            dist = torch.distributions.Categorical(probs)
-            action = dist.sample()
-
-            state, reward, terminated, truncated, _ = self.env.step(action.item())
-            done = terminated or truncated
-
-            log_probs.append(dist.log_prob(action))
-            rewards.append(reward)
-
-        loss = self.calc_loss(log_probs, rewards)
-
-        self.log("train_loss", loss, prog_bar=True)
-        self.log("episode_reward", sum(rewards), prog_bar=True)
-
-        return loss
-
-    def calc_loss(self, log_probs, rewards):
-        gamma = 0.99
-
-        returns = []
-        G = 0
-        for r in reversed(rewards):
-            G = r + gamma * G
-            returns.insert(0, G)
-
-        returns = torch.tensor(returns, device=self.device)
-
-        if len(returns) > 1:
-            returns = (returns - returns.mean()) / (returns.std() + 1e-8)
-
-        policy_loss = []
-        for lp, G in zip(log_probs, returns):
-            policy_loss.append(-lp * G)
-
-        return torch.stack(policy_loss).mean()
-
-    def configure_optimizers(self):
-        return torch.optim.Adam(self.lnn.parameters(), lr=1e-3)
-
-#17 ver for 1e-3 sum For better perform of LNN, you should use 1e3 lr and sum of policy_loss
-#rather than mean
 if __name__ == '__main__':
-    '''
     lnn_model = Model(6, 3, 64).lnn
     lnn_model = torch.compile(lnn_model)
     solver = JointSolver(lnn_model)
@@ -77,10 +20,10 @@ if __name__ == '__main__':
     train_loader = DataLoader(range(500), batch_size=1, num_workers=7)
     trainer = L.Trainer(max_epochs=1, log_every_n_steps=10, enable_progress_bar=True)
     trainer.fit(solver, train_loader)
-    '''
-    lnn_model = MLP(6, 3)
-    lnn_model = torch.compile(lnn_model)
-    solver = JointSolver(lnn_model)
+
+    mlp = MLP(6, 3)
+    lnn_model = torch.compile(mlp)
+    solver = JointSolver(mlp)
 
     train_loader = DataLoader(range(500), batch_size=1, num_workers=7)
     trainer = L.Trainer(max_epochs=1, log_every_n_steps=10, enable_progress_bar=True)
