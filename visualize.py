@@ -4,6 +4,7 @@ import gymnasium as gym
 import lightning as L
 
 from MLP import MLP
+from Q_learning_court_problem import Q_learning_trainer, ReplayMemory
 from model import Model
 
 from joint_problem import JointSolver
@@ -108,9 +109,66 @@ def visualize_game_pool_court(checkpoint_path, model_config=(4, 2, 64)):
     print(f"Rozgrywka zakończona. Suma nagród: {total_reward}")
     env.close()
 
+def visualize_q_learning(checkpoint_path, model_config=(6, 3, 128)):
+    input_size, output_size, hidden_size = model_config
+
+    # 1. Tworzymy PEŁNE obiekty Model, tak jak w treningu
+    policy_net = Model(input_size, output_size, hidden_size)
+    target_net = Model(input_size, output_size, hidden_size)
+
+    memory = ReplayMemory(100, 10)
+
+    try:
+        solver = Q_learning_trainer.load_from_checkpoint(
+            checkpoint_path,
+            policy=policy_net,
+            target=target_net,
+            memory = memory
+        )
+        print(f"Pomyślnie załadowano: {checkpoint_path}")
+    except Exception as e:
+        print(f"Błąd ładowania checkpointu: {e}")
+        return
+
+    env = gym.make("Acrobot-v1", render_mode="human")
+    solver.eval()
+
+    device = solver.device
+    solver.to(device)
+
+    state, _ = env.reset()
+    done = False
+    hx = None
+    total_reward = 0
+
+    print("Rozpoczynanie wizualizacji...")
+
+    with torch.no_grad():
+        while not done:
+            state_tensor = torch.FloatTensor(state).view(1, 1, -1).to(device)
+
+            output, hx = solver.policy(state_tensor, hx)
+
+            probs = F.softmax(output.view(-1), dim=0)
+            action = torch.argmax(probs).item()
+
+            state, reward, terminated, truncated, _ = env.step(action)
+            total_reward += reward
+
+            env.render()
+
+            done = terminated or truncated
+
+    print(f"Rozgrywka zakończona. Suma nagród: {total_reward}")
+    env.close()
+
+'''
+Simple method which illustrates how our models acts in real life. 
+'''
 
 if __name__ == '__main__':
-    PATH = "./lightning_logs/version_17/checkpoints/epoch=0-step=500.ckpt"
+    PATH = "./lightning_logs/version_64/checkpoints/epoch=0-step=500.ckpt"
 
+    #visualize_q_learning(PATH)
     visualize_game_joint(PATH)
     #visualize_game_pool_court(PATH)
