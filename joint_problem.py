@@ -10,6 +10,7 @@ from model import Model
 
 
 #Conclusion is model weights less and gives similar results as MLP
+#Try to change in calc_loss using mean/sum at end.
 
 if __name__ == '__main__':
     lnn_model = Model(6, 3, 64).lnn
