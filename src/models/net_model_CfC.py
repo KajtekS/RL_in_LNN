@@ -3,7 +3,7 @@ from ncps.torch import CfC
 from ncps.wirings import AutoNCP
 
 
-class Model(torch.nn.Module):
+class CfCNet(torch.nn.Module):
     def __init__(self, input_size: int, output_size: int, units: int):
         '''
         :param input_size: input size of given tensor
@@ -21,4 +21,4 @@ class Model(torch.nn.Module):
     def forward(self, x, hx=None):
         out, hx = self.lnn(x, hx)
 
-        return out, hx
+        return out, hx  

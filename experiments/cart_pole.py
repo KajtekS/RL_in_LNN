@@ -4,8 +4,8 @@ import gymnasium as gym
 import lightning as L
 from torch.utils.data import DataLoader
 
-from MLP import MLP
-from model import Model
+from RL_in_LNN.src.models.acrobot_MLP import MLP
+from RL_in_LNN.src.models.net_model_CfC import Model
 
 input_size = 4
 output_size = 2

@@ -4,16 +4,15 @@ import gymnasium as gym
 import lightning as L
 from torch.utils.data import DataLoader
 
-from JointSolver import JointSolver
-from MLP import MLP
-from model import Model
-
+from src.solvers.JointSolver import JointSolver
+from src.models.acrobot_MLP import MLP
+from src.models.net_model_CfC import CfCNet
 
 #Conclusion is model weights less and gives similar results as MLP
 #Try to change in calc_loss using mean/sum at end.
 
 if __name__ == '__main__':
-    lnn_model = Model(6, 3, 64).lnn
+    lnn_model = CfCNet(6, 3, 64).lnn
     lnn_model = torch.compile(lnn_model)
     solver = JointSolver(lnn_model)
 

@@ -9,7 +9,7 @@ import numpy as np
 from torch.utils.data import Dataset, DataLoader
 import torch.nn.functional as F
 
-from model import Model
+from RL_in_LNN.src.models.net_model_CfC import Model
 
 INPUT_DIM = 6
 ACTION_DIM = 3

@@ -3,11 +3,11 @@ import torch.nn.functional as F
 import gymnasium as gym
 import lightning as L
 
-from MLP import MLP
-from Q_learning_court_problem import Q_learning_trainer, ReplayMemory
-from model import Model
+from RL_in_LNN.src.models.acrobot_MLP import MLP
+from RL_in_LNN.experiments.Q_learning_court_problem import Q_learning_trainer, ReplayMemory
+from RL_in_LNN.src.models.net_model_CfC import Model
 
-from joint_problem import JointSolver
+from RL_in_LNN.experiments.joint_problem import JointSolver
 
 if torch.cuda.is_available():
     device = torch.device("cuda")
